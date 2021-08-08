@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "aw-watcher-ask"
+version = "0.1.0"
+description = "An ActivityWatch watcher to randomly pose questions to the user."
+authors = ["bcbernardo <bc.bernardo@hotmail.com>"]
+
+[tool.poetry.scripts]
+aw-watcher-ask = "aw_watcher_ask.cli:app"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+typer = "^0.3.2"
+aw-client = "^0.5.4"
+croniter = "^1.0.15"
+loguru = "^0.5.3"
+Unidecode = "^1.2.0"
+timeout-decorator = "^0.5.0"
+pyzenity = {git = "https://github.com/bcbernardo/Zenity.git", rev="ab46b78"}
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
