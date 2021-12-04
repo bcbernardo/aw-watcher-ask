@@ -42,7 +42,7 @@ def _parse_extra_args(
 
             # if it is, remove it from un parsed args and split the option name
             # and an optional value (if format `--name=value` was used)
-            option_name, *option_values = extra_args.pop(ix).split("=", 1)
+            option_name, *option_values = extra_args[ix].split("=", 1)
             option_name = option_name.lstrip("-")
 
             if not option_values:
@@ -55,7 +55,7 @@ def _parse_extra_args(
                         break
                     else:
                         # is a value; remove it from unparsed args and store it
-                        option_values.append(extra_args.pop(ix))
+                        option_values.append(extra_args[ix])
 
             # have any value been found?
             if len(option_values) == 0:
