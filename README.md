@@ -115,7 +115,7 @@ As other ActivityWatcher [watchers][AW watchers], `aw-watcher-ask` communicates 
 
 This package uses `zenity` utility, which must be installed in the system and globally accessible through the command line. Zenity comes pre-installed with most Linux installations, and can be installed from all major package repositories (`apt`, `dnf`, `pacman`, `brew` etc.).
 
-Porting Zenity to Windows is not trivial. If you use Windows, you may give @ncruces' [Go port](https://github.com/ncruces/zenity) a shot, as it is supposed to be cross-platform. It have not been tested with `aw-watcher-ask` though, and may therefore behave unexpectedly.
+Porting Zenity to Windows is not trivial. If you use Windows, you may give @ncruces' [Go port](https://github.com/ncruces/zenity) a shot, as it is supposed to be cross-platform. Instructions to install on Windows can be found [here](https://timing.rbind.io/post/2021-12-19-setting-up-zenity-with-windows-python-go/)
 
 `aw-watcher-ask` does not currently have a way of storing the questions made, and scheduling them every time the system restarts. We want to implement this eventually, but for now you should wrap all questions you want to schedule in a (shell) script and configure your system to execute it at every startup.
 
