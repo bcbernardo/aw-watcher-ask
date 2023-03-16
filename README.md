@@ -72,7 +72,7 @@ $ poetry shell  # alternatively, add `poetry run` before every command in the ex
 
 ## Usage
 
-Before you start using `aw-watcher-input`, make sure you have ActivityWatch [installed and running][AW installation].
+Before you start using `aw-watcher-ask`, make sure you have ActivityWatch [installed and running][AW installation].
 
 [AW installation]: https://docs.activitywatch.net/en/latest/getting-started.html
 
@@ -91,7 +91,7 @@ $ aw-watcher-ask run --question-id "happiness.level" --question-type="question" 
 
 Check `aw-watcher-ask run --help` to see all required and optional control parameters.
 
-The `--question-id` is used to identify this particular question in the ActivityWatcher a `aw-watcher-input` bucket, and is therefore mandatory.
+The `--question-id` is used to identify this particular question in the ActivityWatcher a `aw-watcher-ask` bucket, and is therefore mandatory.
 
 The `question-type` parameters is also required and should be one of Zenity's supported [dialog types][Zenity Manual] (complex types such as `forms`, `file-selection` and `list` have not been implemented yet). All options supported by these dialog types are accepted by `aw-watcher-ask run` as extra parameters, and passed unaltered to Zenity under the hood.
 
