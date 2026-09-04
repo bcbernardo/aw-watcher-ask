@@ -189,6 +189,6 @@ def main(
         if not answer["success"]:
             log.info("Prompt timed out with no response from user.")
 
-        event = Event(timestamp=get_current_datetime(), data=answer)
+        event = Event(timestamp=get_current_datetime(), duration=1, data=answer)
         client.insert_event(bucket_id, event)
         log.info(f"Event stored in bucket '{bucket_id}'.")
