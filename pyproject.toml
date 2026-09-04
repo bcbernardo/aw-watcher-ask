@@ -8,8 +8,8 @@ authors = ["bcbernardo <bc.bernardo@hotmail.com>"]
 aw-watcher-ask = "aw_watcher_ask.cli:app"
 
 [tool.poetry.dependencies]
-python = "^3.7"
-typer = "^0.25.1"
+python = ">=3.10,<4.0"
+typer = "^0.25"
 aw-client = "^0.5.4"
 croniter = "^1.0.15"
 loguru = "^0.5.3"
@@ -17,7 +17,7 @@ Unidecode = "^1.2.0"
 timeout-decorator = "^0.5.0"
 pyzenity = {git = "https://github.com/bcbernardo/Zenity.git", rev="ab46b78"}
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^5.2"
 
 [build-system]
