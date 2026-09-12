@@ -8,7 +8,7 @@
 
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
 import zenity
@@ -19,6 +19,11 @@ from loguru import logger
 
 from aw_watcher_ask.models import DialogType
 from aw_watcher_ask.utils import fix_id, is_valid_id, get_current_datetime
+
+
+# ActivityWatch's timeline visualization silently discards events lasting
+# one second or less, so every event is given at least this duration.
+MIN_EVENT_DURATION = timedelta(seconds=2)
 
 
 def _bucket_setup(client: ActivityWatchClient, question_id: str) -> str:
@@ -167,6 +172,7 @@ def main(
         log.info(
             "New prompt fired. Waiting for user input..."
         )
+        prompted_at = get_current_datetime()
         if question_type.value in ["forms", "file-selection", "list"]:
             # TODO: not implemented
             answer = _ask_many(
@@ -186,9 +192,14 @@ def main(
                 *args,
                 **kwargs,
             )
+        answered_at = get_current_datetime()
         if not answer["success"]:
             log.info("Prompt timed out with no response from user.")
 
-        event = Event(timestamp=get_current_datetime(), duration=1, data=answer)
+        # the event spans the time the user took to answer the prompt
+        duration = max(answered_at - prompted_at, MIN_EVENT_DURATION)
+        event = Event(
+            timestamp=prompted_at, duration=duration, data=answer
+        )
         client.insert_event(bucket_id, event)
         log.info(f"Event stored in bucket '{bucket_id}'.")
