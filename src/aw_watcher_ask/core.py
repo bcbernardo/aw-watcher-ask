@@ -6,13 +6,14 @@
 """Watcher function and helpers."""
 
 
-import sys
+import logging
 import time
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
 import zenity
 from aw_client import ActivityWatchClient
+from aw_core.log import setup_logging
 from aw_core.models import Event
 from croniter import croniter
 from loguru import logger
@@ -24,6 +25,54 @@ from aw_watcher_ask.utils import fix_id, is_valid_id, get_current_datetime
 # ActivityWatch's timeline visualization silently discards events lasting
 # one second or less, so every event is given at least this duration.
 MIN_EVENT_DURATION = timedelta(seconds=2)
+
+
+def _propagate_to_stdlib(message) -> None:
+    """Forwards a loguru record to the standard library's logging module.
+
+    ActivityWatch gathers the logs of its services through `logging`, so
+    records have to reach the root logger for them to show up in
+    ActivityWatch's log directory.
+    """
+
+    record = message.record
+    std_logger = logging.getLogger(record["name"])
+    level = record["level"].no
+    if not std_logger.isEnabledFor(level):
+        return
+
+    # the question_id is part of the message, as the standard library has
+    # no equivalent to loguru's bound extra values
+    question_id = record["extra"].get("question_id")
+    text = record["message"]
+    if question_id:
+        text = f"<{question_id}> {text}"
+
+    exception = record["exception"]
+    std_logger.handle(std_logger.makeRecord(
+        record["name"],
+        level,
+        record["file"].path,
+        record["line"],
+        text,
+        (),
+        (exception.type, exception.value, exception.traceback)
+        if exception else None,
+        record["function"],
+    ))
+
+
+def _logging_setup(question_id: str, testing: bool = False):
+    """Sends this watcher's logs to stderr and to ActivityWatch's log dir."""
+
+    setup_logging("aw-watcher-ask", testing=testing, log_file=True)
+
+    # drop loguru's default stderr sink, as setup_logging() already installed
+    # one on the root logger, and hand every record over to it instead
+    logger.remove()
+    logger.add(_propagate_to_stdlib, level="INFO")
+
+    return logger.bind(question_id=question_id)
 
 
 def _bucket_setup(client: ActivityWatchClient, question_id: str) -> str:
@@ -130,9 +179,7 @@ def main(
             `DialogType.file_selection`.
     """
 
-    log_format = "{time} <{extra[question_id]}>: {level} - {message}"
-    logger.add(sys.stderr, level="INFO", format=log_format)
-    log = logger.bind(question_id=question_id)
+    log = _logging_setup(question_id, testing=testing)
 
     log.info("Starting new watcher...")
 
